@@ -1,3 +1,4 @@
+
 ; This program demonstrates Encryption, a procedure which uses
 ; special Math... (Edit)
 
@@ -12,6 +13,7 @@ INCLUDE Irvine32.inc
 .data
 
 greeting BYTE "Assembly Final Project, Enigma", 0dh, 0ah,0 ; Welcome banner 
+key BYTE ?
 keySize = 10					      ; Encryption Key size if we are using one
 planeText BYTE "Plane Text",0			      ; User adds his text to be encrypted
 hinText BYTE "More scrambled, better security!",0     ; To give a hint that more encryption is better
@@ -47,8 +49,22 @@ Encryption ENDP
 -------------------------------------------------------------------------------------------------
 
 main proc
-	mov	eax,5				
-	add	eax,6				
+	mov edx, OFFSET planeText	; User text to be encrypt
+	call Writestring		; Display plane text
+	call Crlf			; To clear the line
+	mov esi, OFFSET planeText	; Creating a pointer to the plane text array
+	mov edi, OFFSET key		; Creating a pointer to the key array (edit)
+	mov cl, keysize			; To count the length of the key
+	call Encryption			; Using Encryption function to scramble the plane text
+	mov edx, OFFSET result		; To prepare the resutl to be displayed 
+	call WriteString		; Print the encrypted text
+	call Crlf			; Creating a space
+	
+	
+	
+	
+	
+	
 
 	invoke ExitProcess,0
 main endp
