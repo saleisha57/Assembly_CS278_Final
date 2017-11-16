@@ -16,8 +16,22 @@
 INCLUDE Irvine32.inc
 
 .data
+;------userinput data-------
+size DWORD		;size variable
+
+
+key BYTE 10 DUP(0)		;key variable
+byteCount DWORD ?
+keyArrayCheck DWORD 10 DUP(?)
+;-----------------------
+
+
 
 greeting BYTE "Assembly Final Project, Enigma", 0dh, 0ah,0 ; Welcome banner 
+keyPrompt1 BYTE "Enter a size between 5 and 10",0
+keyPrompt2 BYTE "Enter in a key made of the scambled sequential numbers between 0 and one less the size you chose:"
+
+
 key BYTE ?
 keySize = 10					      ; Encryption Key size if we are using one
 planeText BYTE "Plane Text",0			      ; User adds his text to be encrypted
@@ -54,6 +68,10 @@ Encryption ENDP
 -------------------------------------------------------------------------------------------------
 
 main proc
+	
+
+
+
 	mov edx, OFFSET planeText	; User text to be encrypt
 	call Writestring		; Display plane text
 	call Crlf			; To clear the line
@@ -73,4 +91,64 @@ main proc
 
 	invoke ExitProcess,0
 main endp
+
+;-------------------User input----------------------
+userinput proc
+
+	mov edx, OFFSET greeting
+	call Writestring			;Outputting greeting
+	call Crlf					;new line
+	mov edx, OFFSET keypromt1		;size promt
+	call WriteString			;displays promt1
+	call ReadInt				;user enters integer
+	mov size, eax
+
+	;********add loop?********
+	.IF(EAX < 5) || (EAX > 10)
+		mov edx, OFFSET keypromt1	;size promt
+		call WriteString			;displays promt1
+		call ReadInt				;user enters integer
+		mov size, eax	
+	.END IF
+	
+	;eax is currently holding the size of the key
+
+	mov edx, OFFSET keypromt2	;key definition content...
+	call WriteString			;display keypromt2
+	call Crlf
+	mov edx, OFFSET key			;point to size
+	mov ecx, SIZEOF key			;specify max characters
+	call ReadString				;user input (a string of numbers)
+	mov byteCount, eax			;number of characters
+	mov esi, 0
+	mov ecx, SIZEOF keyArrayCheck
+	L1:
+		mov eax,key[esi]
+		mov keyArrayCheck[esi],eax
+	Loop L1
+		
+		mov esi, 0
+		mov ecx, SIZEOF keyArrayCheck
+		L2:
+			mov eax,keyArrayCheck[esi]
+			.IF(eax > size) || (eax < 0)
+				;keypromt2
+			.END IF
+		Loop L2
+
+		mov esi, 0
+		mov ecx, SIZEOF keyArrayCheck	
+		L3:
+			keyArrayCheck[esi]=keyArrayCheck[esi+1]
+
+
+
+
+
+ret
+userinput ENDP
+;----------------------------------------------------------
+
+
+
 end main
